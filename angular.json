@@ -13,8 +13,11 @@
       "prefix": "nartc",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
+            "customWebpackConfig": {
+              "path": "configs/webpack-dev.config.js"
+            },
             "outputPath": "dist/apps/ng-webfw-twitter-stream",
             "index": "apps/ng-webfw-twitter-stream/src/index.html",
             "main": "apps/ng-webfw-twitter-stream/src/main.ts",
@@ -25,11 +28,16 @@
               "apps/ng-webfw-twitter-stream/src/favicon.ico",
               "apps/ng-webfw-twitter-stream/src/assets"
             ],
-            "styles": ["apps/ng-webfw-twitter-stream/src/styles.scss"],
+            "styles": [
+              "apps/ng-webfw-twitter-stream/src/styles.scss"
+            ],
             "scripts": []
           },
           "configurations": {
             "production": {
+              "customWebpackConfig": {
+                "path": "configs/webpack-prod.config.js"
+              },
               "fileReplacements": [
                 {
                   "replace": "apps/ng-webfw-twitter-stream/src/environments/environment.ts",
@@ -60,7 +68,7 @@
           }
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
             "browserTarget": "ng-webfw-twitter-stream:build"
           },
@@ -121,7 +129,9 @@
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": ["apps/ng-webfw-twitter-stream-e2e/tsconfig.e2e.json"],
+            "tsConfig": [
+              "apps/ng-webfw-twitter-stream-e2e/tsconfig.e2e.json"
+            ],
             "exclude": [
               "**/node_modules/**",
               "!apps/ng-webfw-twitter-stream-e2e/**/*"
