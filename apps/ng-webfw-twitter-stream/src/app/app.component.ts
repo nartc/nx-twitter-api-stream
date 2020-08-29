@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import * as io from 'socket.io-client';
 
 @Component({
   selector: 'nartc-root',
@@ -12,16 +13,16 @@ export class AppComponent implements OnInit {
   constructor(private readonly http: HttpClient) {}
 
   ngOnInit() {
-    this.http
-      .get(
-        'https://api.twitter.com/2/tweets/search/stream?tweet.fields=created_at&expansions=author_id&user.fields=created_at',
-        {
-          headers: {
-            Authorization:
-              'Bearer AAAAAAAAAAAAAAAAAAAAAIWeHAEAAAAAlRRsJrB9%2BIEMUsnz9Q1beIF6uqI%3Dm1cOuYOIyAhgkhzvZ5PmvsBLpwB9YYnIEQRc2nmWYaB7KjeKFu',
-          },
-        },
-      )
-      .subscribe(console.log);
+    const socket = io('http://localhost:3333');
+    socket.on('some', (data) => {
+      console.log(data);
+    });
+
+    socket.on('tweetData', (data) => {
+      console.log('tweet', data);
+    });
+    // this.http.get('http://localhost:3333/api/twitter').subscribe((data) => {
+    //   console.log('data', data);
+    // });
   }
 }
