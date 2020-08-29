@@ -28,6 +28,9 @@
     "ng-webfw-twitter-stream-e2e": {
       "tags": [],
       "implicitDependencies": ["ng-webfw-twitter-stream"]
+    },
+    "api": {
+      "tags": []
     }
   }
 }

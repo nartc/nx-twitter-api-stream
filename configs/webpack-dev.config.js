@@ -11,9 +11,9 @@ module.exports = {
             require('postcss-import'),
             require('tailwindcss')('./configs/tailwind.config.js'),
             require('autoprefixer'),
-          ]
-        }
-      }
-    ]
-  }
+          ],
+        },
+      },
+    ],
+  },
 };

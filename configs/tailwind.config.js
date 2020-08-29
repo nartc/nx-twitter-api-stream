@@ -2,7 +2,7 @@ module.exports = {
   prefix: '',
   separator: ':',
   future: {
-    removeDeprecatedGapUtilities: true
+    removeDeprecatedGapUtilities: true,
   },
-  theme: {}
+  theme: {},
 };
