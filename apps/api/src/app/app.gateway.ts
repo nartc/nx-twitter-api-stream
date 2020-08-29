@@ -1,34 +1,52 @@
 import {
   OnGatewayConnection,
+  OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+import { Subscription } from 'rxjs';
 import { Server, Socket } from 'socket.io';
 import { AppService } from './app.service';
 
 @WebSocketGateway()
-export class AppGateway implements OnGatewayConnection {
-  constructor(private readonly appService: AppService) {
-    appService.tweets$.subscribe((data) => {
-      this.server.emit('tweetData', data);
-    });
-  }
+export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  private readonly subscriptionMap: Record<string, Subscription> = {};
+
+  constructor(private readonly appService: AppService) {}
 
   @WebSocketServer()
   private server: Server;
 
-  @SubscribeMessage('message')
-  handleMessage(client: Socket, payload: any): string {
-    return 'Hello world!';
+  @SubscribeMessage('subscribe')
+  handleInitStream() {
+    this.appService.getData();
+    return 'Subscribed';
   }
 
-  handleConnection(client: any, ...args: any[]): any {
-    console.log(client);
+  @SubscribeMessage('unsubscribe')
+  handleStopStream(client: Socket) {
+    this.unsubscribe(client);
+    return 'Unsubscribed';
   }
 
-  test() {
-    console.log('test');
-    this.server.emit('some', 'this is a test');
+  handleConnection(client: Socket): void {
+    const exist = this.subscriptionMap[client.client.id];
+    if (exist == null) {
+      this.subscriptionMap[
+        client.client.id
+      ] = this.appService.tweets$.subscribe((data) =>
+        client.emit('tweetData', data),
+      );
+    }
+  }
+
+  handleDisconnect(client: Socket): void {
+    this.unsubscribe(client);
+  }
+
+  private unsubscribe(client: Socket) {
+    this.subscriptionMap[client.client.id]?.unsubscribe();
+    delete this.subscriptionMap[client.client.id];
   }
 }
