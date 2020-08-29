@@ -31,6 +31,9 @@
     },
     "api": {
       "tags": []
+    },
+    "client-services": {
+      "tags": []
     }
   }
 }

@@ -1,12 +1,16 @@
 import { HttpService, Injectable } from '@nestjs/common';
 import { IncomingMessage } from 'http';
-import { ReplaySubject, Subject, Subscription, throwError } from 'rxjs';
-import { catchError, takeUntil } from 'rxjs/operators';
+import {
+  fromEventPattern,
+  ReplaySubject,
+  Subscription,
+  throwError,
+} from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
 @Injectable()
 export class AppService {
   private subscription: Subscription;
-  private readonly $stop = new Subject();
   private readonly $tweets = new ReplaySubject(1);
   tweets$ = this.$tweets.asObservable();
 
@@ -28,18 +32,34 @@ export class AppService {
         )
         .pipe(
           catchError((err) => throwError(err)),
-          takeUntil(this.$stop),
+          tap(() => {
+            console.log('streamed');
+          }),
+          map((res) => res.data),
+          switchMap((incomingMessage: IncomingMessage) => {
+            return fromEventPattern(
+              (handler) => {
+                incomingMessage.on('data', handler);
+              },
+              (handler) => {
+                incomingMessage.off('data', handler);
+                incomingMessage.destroy();
+              },
+            );
+          }),
         )
-        .subscribe((data) => {
-          (data.data as IncomingMessage).on('data', (d) => {
-            this.$tweets.next(JSON.parse(d));
-          });
+        .subscribe((data: unknown) => {
+          try {
+            this.$tweets.next(JSON.parse(data as string));
+          } catch (e) {
+            this.$tweets.next({});
+          }
         });
     }
   }
 
   stop() {
-    this.$stop.next();
-    this.$stop.complete();
+    this.subscription?.unsubscribe();
+    this.subscription = null;
   }
 }

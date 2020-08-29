@@ -11,7 +11,7 @@ import { AppService } from './app.service';
 
 @WebSocketGateway()
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  private readonly subscriptionMap: Record<string, Subscription> = {};
+  private readonly subscriptionMap = new Map<string, Subscription>();
 
   constructor(private readonly appService: AppService) {}
 
@@ -19,8 +19,9 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private server: Server;
 
   @SubscribeMessage('subscribe')
-  handleInitStream() {
+  handleInitStream(client: Socket) {
     this.appService.getData();
+    this.initSubscription(client);
     return 'Subscribed';
   }
 
@@ -31,22 +32,30 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   handleConnection(client: Socket): void {
-    const exist = this.subscriptionMap[client.client.id];
-    if (exist == null) {
-      this.subscriptionMap[
-        client.client.id
-      ] = this.appService.tweets$.subscribe((data) =>
-        client.emit('tweetData', data),
-      );
-    }
+    this.initSubscription(client);
   }
 
   handleDisconnect(client: Socket): void {
     this.unsubscribe(client);
   }
 
+  private initSubscription(client: Socket) {
+    if (this.subscriptionMap.get(client.client.id) == null) {
+      this.subscriptionMap.set(
+        client.client.id,
+        this.appService.tweets$.subscribe((data) => {
+          console.log(client.client.id, 'streaming');
+          client.emit('tweetData', data);
+        }),
+      );
+    }
+  }
+
   private unsubscribe(client: Socket) {
-    this.subscriptionMap[client.client.id]?.unsubscribe();
-    delete this.subscriptionMap[client.client.id];
+    this.subscriptionMap.get(client.client.id)?.unsubscribe();
+    this.subscriptionMap.set(client.client.id, null);
+    if ([...this.subscriptionMap.values()].every((sub) => sub == null)) {
+      this.appService.stop();
+    }
   }
 }

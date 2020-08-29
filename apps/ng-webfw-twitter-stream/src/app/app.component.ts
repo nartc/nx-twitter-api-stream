@@ -1,6 +1,5 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import * as io from 'socket.io-client';
+import { SocketService } from '@nartc/client/services';
 
 @Component({
   selector: 'nartc-root',
@@ -10,19 +9,17 @@ import * as io from 'socket.io-client';
 export class AppComponent implements OnInit {
   title = 'ng-webfw-twitter-stream';
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly socketService: SocketService) {}
 
   ngOnInit() {
-    const socket = io('http://localhost:3333');
-    socket.on('some', (data) => {
-      console.log(data);
-    });
+    this.socketService.on('tweetData').subscribe(console.log);
+  }
 
-    socket.on('tweetData', (data) => {
-      console.log('tweet', data);
-    });
-    // this.http.get('http://localhost:3333/api/twitter').subscribe((data) => {
-    //   console.log('data', data);
-    // });
+  start() {
+    this.socketService.emit('subscribe');
+  }
+
+  stop() {
+    this.socketService.emit('unsubscribe');
   }
 }
