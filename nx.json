@@ -35,10 +35,13 @@
     "client-services": {
       "tags": []
     },
-    "client-core-home": {
+    "client-core-web-frameworks": {
       "tags": []
     },
-    "client-core-web-frameworks": {
+    "client-models": {
+      "tags": []
+    },
+    "client-common": {
       "tags": []
     }
   }

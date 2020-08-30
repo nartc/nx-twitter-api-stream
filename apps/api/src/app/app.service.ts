@@ -6,7 +6,7 @@ import {
   Subscription,
   throwError,
 } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
 
 @Injectable()
 export class AppService {
@@ -20,7 +20,7 @@ export class AppService {
     if (this.subscription == null) {
       this.subscription = this.http
         .get(
-          'https://api.twitter.com/2/tweets/search/stream?tweet.fields=created_at&expansions=author_id&user.fields=created_at',
+          'https://api.twitter.com/2/tweets/search/stream?tweet.fields=created_at,geo,author_id,public_metrics&expansions=author_id,geo.place_id&user.fields=profile_image_url,url&place.fields=geo',
           {
             headers: {
               Connection: 'keep-alive',
@@ -47,18 +47,22 @@ export class AppService {
               },
             );
           }),
+          finalize(() => {
+            console.log('stopped stream');
+          }),
         )
         .subscribe((data: unknown) => {
           try {
             this.$tweets.next(JSON.parse(data as string));
           } catch (e) {
-            this.$tweets.next({});
+            console.error('error parsing tweet');
           }
         });
     }
   }
 
   stop() {
+    console.log('stopping');
     this.subscription?.unsubscribe();
     this.subscription = null;
   }

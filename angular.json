@@ -28,9 +28,7 @@
               "apps/ng-webfw-twitter-stream/src/favicon.ico",
               "apps/ng-webfw-twitter-stream/src/assets"
             ],
-            "styles": [
-              "apps/ng-webfw-twitter-stream/src/styles.scss"
-            ],
+            "styles": ["apps/ng-webfw-twitter-stream/src/styles.scss"],
             "scripts": []
           },
           "configurations": {
@@ -130,9 +128,7 @@
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": [
-              "apps/ng-webfw-twitter-stream-e2e/tsconfig.e2e.json"
-            ],
+            "tsConfig": ["apps/ng-webfw-twitter-stream-e2e/tsconfig.e2e.json"],
             "exclude": [
               "**/node_modules/**",
               "!apps/ng-webfw-twitter-stream-e2e/**/*"
@@ -154,9 +150,7 @@
             "outputPath": "dist/apps/api",
             "main": "apps/api/src/main.ts",
             "tsConfig": "apps/api/tsconfig.app.json",
-            "assets": [
-              "apps/api/src/assets"
-            ]
+            "assets": ["apps/api/src/assets"]
           },
           "configurations": {
             "production": {
@@ -185,10 +179,7 @@
               "apps/api/tsconfig.app.json",
               "apps/api/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/api/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/api/**/*"]
           }
         },
         "test": {
@@ -214,10 +205,7 @@
               "libs/client/services/tsconfig.lib.json",
               "libs/client/services/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/client/services/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/client/services/**/*"]
           }
         },
         "test": {
@@ -227,41 +215,6 @@
             "tsConfig": "libs/client/services/tsconfig.spec.json",
             "passWithNoTests": true
           }
-        }
-      }
-    },
-    "client-core-home": {
-      "projectType": "library",
-      "root": "libs/client/core/home",
-      "sourceRoot": "libs/client/core/home/src",
-      "prefix": "nartc",
-      "architect": {
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "libs/client/core/home/tsconfig.lib.json",
-              "libs/client/core/home/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/client/core/home/**/*"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/client/core/home/jest.config.js",
-            "tsConfig": "libs/client/core/home/tsconfig.spec.json",
-            "passWithNoTests": true,
-            "setupFile": "libs/client/core/home/src/test-setup.ts"
-          }
-        }
-      },
-      "schematics": {
-        "@nrwl/angular:component": {
-          "style": "scss"
         }
       }
     },
@@ -297,6 +250,58 @@
       "schematics": {
         "@nrwl/angular:component": {
           "style": "scss"
+        }
+      }
+    },
+    "client-models": {
+      "root": "libs/client/models",
+      "sourceRoot": "libs/client/models/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/client/models/tsconfig.lib.json",
+              "libs/client/models/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/client/models/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/client/models/jest.config.js",
+            "tsConfig": "libs/client/models/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "client-common": {
+      "root": "libs/client/common",
+      "sourceRoot": "libs/client/common/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/client/common/tsconfig.lib.json",
+              "libs/client/common/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/client/common/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/client/common/jest.config.js",
+            "tsConfig": "libs/client/common/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
         }
       }
     }

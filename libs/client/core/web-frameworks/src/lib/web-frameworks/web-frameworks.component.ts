@@ -1,10 +1,16 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
+  OnDestroy,
   OnInit,
 } from '@angular/core';
-import { interval } from 'rxjs';
+import { WebFrameworksChartData, WebFrameworksVm } from '@nartc/client/models';
+import { TweetTagMapService } from '@nartc/client/services';
+import { combineLatest, Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
+import { WebFrameworksTweetsQuery } from '../state/web-frameworks-tweets/web-frameworks-tweets.query';
+import { WebFrameworksQuery } from '../state/web-frameworks/web-frameworks.query';
+import { WebFrameworksService } from '../web-frameworks.service';
 
 @Component({
   selector: 'nartc-web-frameworks',
@@ -12,57 +18,66 @@ import { interval } from 'rxjs';
   styleUrls: ['./web-frameworks.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WebFrameworksComponent implements OnInit {
+export class WebFrameworksComponent implements OnInit, OnDestroy {
   // center = new google.maps.LatLng(39.8283459, -98.5794797);
-  chartData = [
-    {
-      name: 'Angular',
-      value: 500,
-    },
-    {
-      name: 'React',
-      value: 505,
-    },
-    {
-      name: 'Vue',
-      value: 510,
-    },
-  ].sort((a, b) => b.value - a.value);
+  subscribedAt$ = this.webFrameworksQuery.subscribedAt$;
+  isSubscribed$ = this.webFrameworksQuery.isSubscribed$;
+  chartData$ = this.webFrameworksQuery
+    .select((state) => {
+      const { subscribedAt, ...frameworks } = state;
+      return frameworks;
+    })
+    .pipe(
+      map((state) =>
+        Object.entries(state).reduce(
+          (acc: WebFrameworksChartData, [key, count]) => {
+            const tag = this.tweetTagMapService.getTag(key);
+            acc.results.push({ name: tag.label, value: count });
+            acc.customColors.push({ name: tag.label, value: tag.color });
+            return acc;
+          },
+          { results: [], customColors: [] },
+        ),
+      ),
+      tap((chartData) => {
+        chartData.results.sort((a, b) => b.value - a.value);
+      }),
+    );
 
-  customColors = [
-    {
-      name: 'Angular',
-      value: '#c3042f',
-    },
-    {
-      name: 'React',
-      value: '#62dafb',
-    },
-    {
-      name: 'Vue',
-      value: '#3fb983',
-    },
-  ];
+  vm$: Observable<WebFrameworksVm>;
 
-  constructor(private readonly cdr: ChangeDetectorRef) {}
+  constructor(
+    private readonly webFrameworksService: WebFrameworksService,
+    private readonly tweetTagMapService: TweetTagMapService,
+    private readonly webFrameworksQuery: WebFrameworksQuery,
+    private readonly webFrameworksTweetsQuery: WebFrameworksTweetsQuery,
+  ) {}
 
   ngOnInit(): void {
-    interval(500).subscribe(() => {
-      this.random();
-      this.cdr.markForCheck();
-    });
+    this.webFrameworksService.init();
+
+    this.vm$ = combineLatest([
+      this.chartData$,
+      this.webFrameworksTweetsQuery.tweetList$,
+      this.webFrameworksTweetsQuery.geoTweetList$,
+    ]).pipe(
+      map(([chartData, tweets, geoTweets]) => ({
+        chartData,
+        tweets,
+        geoTweets,
+      })),
+    );
   }
 
-  random() {
-    const randomFramework = Math.floor(Math.random() * 3);
-    const randomAdd = Math.floor(Math.random() * 5) + 1;
-    this.chartData = this.chartData
-      .map((data, index) => {
-        if (index === randomFramework) {
-          data.value += randomAdd;
-        }
-        return data;
-      })
-      .sort((a, b) => b.value - a.value);
+  toggleStream(isSubscribed: boolean) {
+    if (isSubscribed) {
+      this.webFrameworksService.unsubscribeStream();
+    } else {
+      this.webFrameworksService.init();
+    }
+  }
+
+  ngOnDestroy() {
+    this.webFrameworksService.unsubscribeStream();
   }
 }

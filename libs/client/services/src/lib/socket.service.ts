@@ -1,7 +1,12 @@
 import { Injectable } from '@angular/core';
+import { TweetFilteredStream } from '@nartc/client/models';
 import { fromEventPattern, Observable } from 'rxjs';
 import * as io from 'socket.io-client';
 import Socket = SocketIOClient.Socket;
+
+export interface SocketEventMap {
+  tweetData: TweetFilteredStream;
+}
 
 @Injectable({ providedIn: 'root' })
 export class SocketService {
@@ -19,7 +24,7 @@ export class SocketService {
     }
   }
 
-  on(event: string): Observable<unknown> {
+  on<K extends keyof SocketEventMap>(event: K): Observable<SocketEventMap[K]> {
     return fromEventPattern(
       (handler) => {
         this.socket?.on(event, handler);

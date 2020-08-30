@@ -5,6 +5,9 @@ import { RouterModule } from '@angular/router';
 import { BarChartModule } from '@swimlane/ngx-charts';
 import { webFrameworksRoutes } from './web-frameworks.routes';
 import { WebFrameworksComponent } from './web-frameworks/web-frameworks.component';
+import { ChartComponent } from './components/chart/chart.component';
+import { ListComponent } from './components/list/list.component';
+import { MapComponent } from './components/map/map.component';
 
 @NgModule({
   imports: [
@@ -13,6 +16,6 @@ import { WebFrameworksComponent } from './web-frameworks/web-frameworks.componen
     GoogleMapsModule,
     BarChartModule,
   ],
-  declarations: [WebFrameworksComponent],
+  declarations: [WebFrameworksComponent, ChartComponent, ListComponent, MapComponent],
 })
 export class ClientCoreWebFrameworksModule {}
