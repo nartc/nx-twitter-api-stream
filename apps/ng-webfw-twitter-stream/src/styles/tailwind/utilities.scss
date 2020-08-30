@@ -1,0 +1,22 @@
+.transform-transition {
+  @apply transition-transform ease-in-out duration-200;
+}
+
+.transform-colors {
+  @apply transition-colors ease-in-out duration-200;
+}
+
+.hover-up {
+  @apply transform translate-y-0;
+  &:hover {
+    @apply -translate-y-2;
+  }
+}
+
+.gradient-right-primary:hover {
+  @apply bg-gradient-to-r from-pink-500 to-orange-500;
+}
+
+.gradient-right-secondary:hover {
+  @apply bg-gradient-to-r from-blue-400 to-indigo-400;
+}

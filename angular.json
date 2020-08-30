@@ -28,7 +28,9 @@
               "apps/ng-webfw-twitter-stream/src/favicon.ico",
               "apps/ng-webfw-twitter-stream/src/assets"
             ],
-            "styles": ["apps/ng-webfw-twitter-stream/src/styles.scss"],
+            "styles": [
+              "apps/ng-webfw-twitter-stream/src/styles.scss"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -128,7 +130,9 @@
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": ["apps/ng-webfw-twitter-stream-e2e/tsconfig.e2e.json"],
+            "tsConfig": [
+              "apps/ng-webfw-twitter-stream-e2e/tsconfig.e2e.json"
+            ],
             "exclude": [
               "**/node_modules/**",
               "!apps/ng-webfw-twitter-stream-e2e/**/*"
@@ -150,7 +154,9 @@
             "outputPath": "dist/apps/api",
             "main": "apps/api/src/main.ts",
             "tsConfig": "apps/api/tsconfig.app.json",
-            "assets": ["apps/api/src/assets"]
+            "assets": [
+              "apps/api/src/assets"
+            ]
           },
           "configurations": {
             "production": {
@@ -179,7 +185,10 @@
               "apps/api/tsconfig.app.json",
               "apps/api/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!apps/api/**/*"]
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/api/**/*"
+            ]
           }
         },
         "test": {
@@ -205,7 +214,10 @@
               "libs/client/services/tsconfig.lib.json",
               "libs/client/services/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/client/services/**/*"]
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/client/services/**/*"
+            ]
           }
         },
         "test": {
@@ -217,10 +229,80 @@
           }
         }
       }
+    },
+    "client-core-home": {
+      "projectType": "library",
+      "root": "libs/client/core/home",
+      "sourceRoot": "libs/client/core/home/src",
+      "prefix": "nartc",
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/client/core/home/tsconfig.lib.json",
+              "libs/client/core/home/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/client/core/home/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/client/core/home/jest.config.js",
+            "tsConfig": "libs/client/core/home/tsconfig.spec.json",
+            "passWithNoTests": true,
+            "setupFile": "libs/client/core/home/src/test-setup.ts"
+          }
+        }
+      },
+      "schematics": {
+        "@nrwl/angular:component": {
+          "style": "scss"
+        }
+      }
+    },
+    "client-core-web-frameworks": {
+      "projectType": "library",
+      "root": "libs/client/core/web-frameworks",
+      "sourceRoot": "libs/client/core/web-frameworks/src",
+      "prefix": "nartc",
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/client/core/web-frameworks/tsconfig.lib.json",
+              "libs/client/core/web-frameworks/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/client/core/web-frameworks/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/client/core/web-frameworks/jest.config.js",
+            "tsConfig": "libs/client/core/web-frameworks/tsconfig.spec.json",
+            "passWithNoTests": true,
+            "setupFile": "libs/client/core/web-frameworks/src/test-setup.ts"
+          }
+        }
+      },
+      "schematics": {
+        "@nrwl/angular:component": {
+          "style": "scss"
+        }
+      }
     }
   },
   "cli": {
-    "defaultCollection": "@nrwl/angular"
+    "defaultCollection": "@datorama/akita"
   },
   "schematics": {
     "@nrwl/workspace": {

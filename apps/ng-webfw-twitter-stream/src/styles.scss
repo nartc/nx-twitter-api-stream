@@ -1,5 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;600&display=swap');
 @import 'tailwindcss/base';
+@import './styles/tailwind/base.scss';
 @import 'tailwindcss/components';
+@import './styles/tailwind/components.scss';
 @import 'tailwindcss/utilities';
+@import './styles/tailwind/utilities.scss';
 
-/* You can add global styles to this file, and also import other style files */
+body {
+  @apply bg-background text-white;
+}

@@ -1,0 +1,19 @@
+<div class="h-full grid grid-rows-3 gap-4">
+  <div>
+    <ngx-charts-bar-horizontal
+      [results]="chartData"
+      [customColors]="customColors"
+      yAxisLabel="Framework"
+      [yAxis]="true"
+      [xAxis]="true"
+      [showYAxisLabel]="true"
+      [roundDomains]="true"
+      [noBarWhenZero]="true"
+      [showDataLabel]="true"
+      [roundEdges]="false"
+    ></ngx-charts-bar-horizontal>
+  </div>
+  <div class="row-span-2">
+    <button type="button" class="btn btn-secondary" (click)="random()">Add random</button>
+  </div>
+</div>

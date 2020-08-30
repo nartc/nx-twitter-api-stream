@@ -16,7 +16,11 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@nartc/client/services": ["libs/client/services/src/index.ts"]
+      "@nartc/client/services": ["libs/client/services/src/index.ts"],
+      "@nartc/client/core/home": ["libs/client/core/home/src/index.ts"],
+      "@nartc/client/core/web-frameworks": [
+        "libs/client/core/web-frameworks/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

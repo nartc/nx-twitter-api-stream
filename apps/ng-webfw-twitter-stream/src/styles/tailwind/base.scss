@@ -1,0 +1,36 @@
+h1 {
+  @apply text-5xl;
+}
+
+h2 {
+  @apply text-4xl;
+}
+
+h3 {
+  @apply text-3xl;
+}
+
+h4 {
+  @apply text-2xl;
+}
+
+h5 {
+  @apply text-xl;
+}
+
+h6 {
+  @apply text-lg;
+}
+
+/*! purgecss start ignore */
+:root {
+  --background: #162447;
+  --primary: #e43f5a;
+  --secondary: #1f4068;
+  --accent: #1b1b2f;
+  --gray-light: theme('colors.gray.200');
+  --gray-medium: theme('colors.gray.400');
+  --gray-dark: theme('colors.gray.600');
+}
+
+/*! purgecss end ignore */
