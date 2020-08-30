@@ -19,7 +19,6 @@ import { WebFrameworksService } from '../web-frameworks.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WebFrameworksComponent implements OnInit, OnDestroy {
-  // center = new google.maps.LatLng(39.8283459, -98.5794797);
   subscribedAt$ = this.webFrameworksQuery.subscribedAt$;
   isSubscribed$ = this.webFrameworksQuery.isSubscribed$;
   chartData$ = this.webFrameworksQuery
