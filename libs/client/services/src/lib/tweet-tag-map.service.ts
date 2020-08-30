@@ -43,4 +43,8 @@ export class TweetTagMapService {
   getTag(key: string): TweetTag {
     return this._tags.get(key);
   }
+
+  addTag(tag: TweetTag) {
+    this._tags.set(tag.value, tag);
+  }
 }

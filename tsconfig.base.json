@@ -10,33 +10,22 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "lib": [
-      "es2017",
-      "dom"
-    ],
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@nartc/client/services": [
-        "libs/client/services/src/index.ts"
-      ],
+      "@nartc/client/services": ["libs/client/services/src/index.ts"],
       "@nartc/client/core/web-frameworks": [
         "libs/client/core/web-frameworks/src/index.ts"
       ],
-      "@nartc/client/models": [
-        "libs/client/models/src/index.ts"
-      ],
-      "@nartc/client/common": [
-        "libs/client/common/src/index.ts"
+      "@nartc/client/models": ["libs/client/models/src/index.ts"],
+      "@nartc/client/common": ["libs/client/common/src/index.ts"],
+      "@nartc/client/core/dynamic-dialog": [
+        "libs/client/core/dynamic-dialog/src/index.ts"
       ]
     }
   },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ]
+  "exclude": ["node_modules", "tmp"]
 }

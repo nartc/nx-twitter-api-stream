@@ -4,10 +4,16 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
+import {
+  DynamicDialogConfig,
+  DynamicDialogService,
+} from '@nartc/client/core/dynamic-dialog';
 import { WebFrameworksChartData, WebFrameworksVm } from '@nartc/client/models';
 import { TweetTagMapService } from '@nartc/client/services';
 import { combineLatest, Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, switchMap, take, tap } from 'rxjs/operators';
+import { SettingsComponent } from '../dialogs/settings/settings.component';
+import { WebFrameworksRulesQuery } from '../state/web-frameworks-rules/web-frameworks-rules.query';
 import { WebFrameworksTweetsQuery } from '../state/web-frameworks-tweets/web-frameworks-tweets.query';
 import { WebFrameworksQuery } from '../state/web-frameworks/web-frameworks.query';
 import { WebFrameworksService } from '../web-frameworks.service';
@@ -48,8 +54,10 @@ export class WebFrameworksComponent implements OnInit, OnDestroy {
   constructor(
     private readonly webFrameworksService: WebFrameworksService,
     private readonly tweetTagMapService: TweetTagMapService,
+    private readonly dynamicDialogService: DynamicDialogService,
     private readonly webFrameworksQuery: WebFrameworksQuery,
     private readonly webFrameworksTweetsQuery: WebFrameworksTweetsQuery,
+    private readonly webFrameworksRulesQuery: WebFrameworksRulesQuery,
   ) {}
 
   ngOnInit(): void {
@@ -74,6 +82,28 @@ export class WebFrameworksComponent implements OnInit, OnDestroy {
     } else {
       this.webFrameworksService.init();
     }
+  }
+
+  onSettingsClicked() {
+    this.webFrameworksRulesQuery.rules$
+      .pipe(
+        take(1),
+        switchMap((rules) => {
+          const config = new DynamicDialogConfig<typeof rules>();
+          config.data = rules;
+          config.header = 'Adjust Twitter Queries';
+          config.closable = true;
+          const ref = this.dynamicDialogService.open<
+            { value: string; tag: string }[]
+          >(SettingsComponent, config);
+          return ref.afterClosed;
+        }),
+      )
+      .subscribe((rulesToAdd) => {
+        if (rulesToAdd) {
+          this.webFrameworksService.addRules(rulesToAdd);
+        }
+      });
   }
 
   ngOnDestroy() {

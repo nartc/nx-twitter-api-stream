@@ -43,6 +43,9 @@
     },
     "client-common": {
       "tags": []
+    },
+    "client-core-dynamic-dialog": {
+      "tags": []
     }
   }
 }

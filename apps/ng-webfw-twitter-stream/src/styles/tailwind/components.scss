@@ -3,6 +3,10 @@ a.link {
 }
 
 .btn {
+  &[disabled] {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
   &.btn-primary {
     @apply bg-primary px-4 py-2 shadow rounded-full;
   }

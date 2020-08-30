@@ -10,22 +10,60 @@ import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
 
 @Injectable()
 export class AppService {
+  private readonly baseUrl = 'https://api.twitter.com/2/tweets/search/stream';
+  private readonly bearerToken =
+    'Bearer AAAAAAAAAAAAAAAAAAAAAIWeHAEAAAAAlRRsJrB9%2BIEMUsnz9Q1beIF6uqI%3Dm1cOuYOIyAhgkhzvZ5PmvsBLpwB9YYnIEQRc2nmWYaB7KjeKFu';
   private subscription: Subscription;
   private readonly $tweets = new ReplaySubject(1);
   tweets$ = this.$tweets.asObservable();
 
   constructor(private readonly http: HttpService) {}
 
+  getRules() {
+    return this.http
+      .get(`${this.baseUrl}/rules`, {
+        headers: { Authorization: this.bearerToken },
+      })
+      .pipe(map((res) => res.data.data));
+  }
+
+  addRules(rules: { value: string; tag: string }[]) {
+    return this.http
+      .post(
+        `${this.baseUrl}/rules`,
+        {
+          add: rules,
+        },
+        {
+          headers: { Authorization: this.bearerToken },
+        },
+      )
+      .pipe(map((res) => res.data.data));
+  }
+
+  deleteRules(rules: string[]) {
+    return this.http
+      .post(
+        `${this.baseUrl}/rules`,
+        {
+          delete: { ids: rules },
+        },
+        {
+          headers: { Authorization: this.bearerToken },
+        },
+      )
+      .pipe(map((res) => res.data.data));
+  }
+
   getData() {
     if (this.subscription == null) {
       this.subscription = this.http
         .get(
-          'https://api.twitter.com/2/tweets/search/stream?tweet.fields=created_at,geo,author_id,public_metrics&expansions=author_id,geo.place_id&user.fields=profile_image_url,url&place.fields=geo',
+          `${this.baseUrl}?tweet.fields=created_at,geo,author_id,public_metrics&expansions=author_id,geo.place_id&user.fields=profile_image_url,url&place.fields=geo`,
           {
             headers: {
               Connection: 'keep-alive',
-              Authorization:
-                'Bearer AAAAAAAAAAAAAAAAAAAAAIWeHAEAAAAAlRRsJrB9%2BIEMUsnz9Q1beIF6uqI%3Dm1cOuYOIyAhgkhzvZ5PmvsBLpwB9YYnIEQRc2nmWYaB7KjeKFu',
+              Authorization: this.bearerToken,
             },
             responseType: 'stream',
           },
