@@ -69,6 +69,13 @@ I spent around 15-16 hours on this project. The rest of the time was writing up 
 
 As you can see here, `app.service.ts` takes up the most time because of all the RxJS magic with Twitter API Stream endpoint. Unsubscription logic is handled in `app.service.ts` as well.
 
+## Local Development
+
+- Clone the project
+- Supply Environment Variables to `.env` based on `.env.example`
+- Run `npm run start api` to start the backend
+- Run `npm run start` to start the frontend on port 4200
+
 ## License
 
 Feel free to use my code on your project. It would be great if you put a reference to this repository.
