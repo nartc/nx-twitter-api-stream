@@ -68,11 +68,14 @@ export class WebFrameworksService {
         }));
         for (const rule of deletedRules) {
           localStorage.removeItem(rule.tag);
-          this.webFrameworksStore.update((state) => {
-            const cloned = { ...state };
-            delete cloned[rule.tag];
-            return cloned;
-          });
+          this.webFrameworksStore.update((state) =>
+            Object.keys(state).reduce((newState, key) => {
+              if (key === rule.tag) {
+                delete newState[rule.tag];
+              }
+              return newState;
+            }, state),
+          );
         }
       });
     });
@@ -83,10 +86,12 @@ export class WebFrameworksService {
       .get<{ id: string; value: string; tag: string }[]>(this.baseRulesApi)
       .subscribe((data) => {
         const defaultTags = ['angular', 'react', 'vue'];
-        this.webFrameworksRulesStore.update(() => {
-          const rules: TweetRule[] = data
-            .filter((rule) => !defaultTags.includes(rule.tag))
-            .map((rule) => {
+        const nonDefaultRules = data.filter(
+          (rule) => !defaultTags.includes(rule.tag),
+        );
+        applyTransaction(() => {
+          this.webFrameworksRulesStore.update(() => {
+            const rules: TweetRule[] = nonDefaultRules.map((rule) => {
               const storedTag = localStorage.getItem(rule.tag);
               const tag: TweetRule = storedTag
                 ? JSON.parse(storedTag)
@@ -103,7 +108,12 @@ export class WebFrameworksService {
                 ...tag,
               };
             });
-          return { rules };
+            return { rules };
+          });
+
+          for (const nonDefaultRule of nonDefaultRules) {
+            this.webFrameworksStore.update({ [nonDefaultRule.tag]: 0 });
+          }
         });
       });
   }
@@ -113,7 +123,6 @@ export class WebFrameworksService {
       .on('tweetData')
       .pipe(
         tap((tweet) => {
-          console.log(tweet);
           applyTransaction(() => {
             this.webFrameworksStore.updateFromTweet(tweet);
             this.webFrameworksTweetsStore.updateFromTweet(tweet);

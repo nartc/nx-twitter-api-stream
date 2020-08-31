@@ -104,7 +104,7 @@ export class SettingsComponent implements OnInit {
     } else {
       const tagValue = ruleControl.get('tag').value;
       const ruleId = this.dynamicDialogConfig.data.find(
-        (rule) => rule.value === tagValue,
+        (rule) => rule.tag === tagValue,
       ).id;
       this.webFrameworksService.deleteRules([ruleId]);
       this.dynamicDialogRef.close();
