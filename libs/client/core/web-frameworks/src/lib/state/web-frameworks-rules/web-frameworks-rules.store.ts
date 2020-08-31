@@ -1,15 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Store, StoreConfig } from '@datorama/akita';
-import { TweetRule, TweetTag } from '@nartc/client/models';
+import { TweetRule } from '@nartc/client/models';
 
 export interface WebFrameworksRulesState {
-  defaultRules: (TweetRule & TweetTag)[];
-  rules: (TweetRule & TweetTag)[];
+  rules: TweetRule[];
 }
 
 export function createInitialState(): WebFrameworksRulesState {
   return {
-    defaultRules: [],
     rules: [],
   };
 }

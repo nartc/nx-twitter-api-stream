@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ChartCustomColor, ChartResult } from '@nartc/client/models';
 
 @Component({
@@ -12,11 +7,7 @@ import { ChartCustomColor, ChartResult } from '@nartc/client/models';
   styleUrls: ['./chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChartComponent implements OnInit {
+export class ChartComponent {
   @Input() results: ChartResult[];
   @Input() customColors: ChartCustomColor[];
-
-  constructor() {}
-
-  ngOnInit(): void {}
 }

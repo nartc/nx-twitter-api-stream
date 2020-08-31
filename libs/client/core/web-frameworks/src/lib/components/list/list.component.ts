@@ -6,12 +6,7 @@ import {
   transition,
   trigger,
 } from '@angular/animations';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Tweet } from '@nartc/client/models';
 
 @Component({
@@ -40,12 +35,8 @@ import { Tweet } from '@nartc/client/models';
     ]),
   ],
 })
-export class ListComponent implements OnInit {
+export class ListComponent {
   @Input() tweets: Tweet[];
-
-  constructor() {}
-
-  ngOnInit(): void {}
 
   trackByFn(index: number, item: Tweet) {
     return item.url;

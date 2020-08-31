@@ -51,8 +51,8 @@ export class WebFrameworksTweetsStore extends Store<WebFrameworksTweetsState> {
           {
             ...newTweet,
             tags: matching_rules.map((rule) => rule.tag) ?? [],
-            lat: places[0].geo.bbox[0],
-            lng: places[0].geo.bbox[1],
+            lat: places[0].geo.bbox[1],
+            lng: places[0].geo.bbox[0],
           },
           ...state.geoTweets,
         ];

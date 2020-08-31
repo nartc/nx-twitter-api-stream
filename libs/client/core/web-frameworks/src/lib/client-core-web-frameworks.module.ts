@@ -13,6 +13,7 @@ import { MapComponent } from './components/map/map.component';
 import { SettingsComponent } from './dialogs/settings/settings.component';
 import { webFrameworksRoutes } from './web-frameworks.routes';
 import { WebFrameworksComponent } from './web-frameworks/web-frameworks.component';
+import { SettingsInputComponent } from './dialogs/settings/settings-input/settings-input.component';
 
 @NgModule({
   imports: [
@@ -31,6 +32,7 @@ import { WebFrameworksComponent } from './web-frameworks/web-frameworks.componen
     ListComponent,
     MapComponent,
     SettingsComponent,
+    SettingsInputComponent,
   ],
 })
 export class ClientCoreWebFrameworksModule {}

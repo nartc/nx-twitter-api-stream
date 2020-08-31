@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
-import { TweetTag } from '@nartc/client/models';
+import { TweetRule } from '@nartc/client/models';
 
 @Injectable({ providedIn: 'root' })
 export class TweetTagMapService {
-  private readonly _tags: Map<string, TweetTag> = new Map<string, TweetTag>([
+  private readonly _tags: Map<string, TweetRule> = new Map<string, TweetRule>([
     [
       'angular',
       {
-        value: 'angular',
+        id: '',
+        tag: 'angular',
+        value: '',
         label: 'Angular',
         color: '#c3042f',
         marker:
@@ -17,7 +19,9 @@ export class TweetTagMapService {
     [
       'react',
       {
-        value: 'react',
+        id: '',
+        value: '',
+        tag: 'react',
         label: 'React',
         color: '#62dafb',
         marker:
@@ -27,7 +31,9 @@ export class TweetTagMapService {
     [
       'vue',
       {
-        value: 'vue',
+        id: '',
+        value: '',
+        tag: 'vue',
         label: 'Vue',
         color: '#3fb983',
         marker:
@@ -36,15 +42,15 @@ export class TweetTagMapService {
     ],
   ]);
 
-  get tags(): TweetTag[] {
+  get tags(): TweetRule[] {
     return [...this._tags.values()];
   }
 
-  getTag(key: string): TweetTag {
+  getTag(key: string): TweetRule {
     return this._tags.get(key);
   }
 
-  addTag(tag: TweetTag) {
-    this._tags.set(tag.value, tag);
+  addTag(tag: TweetRule) {
+    this._tags.set(tag.tag, tag);
   }
 }

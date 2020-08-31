@@ -3,7 +3,6 @@ import {
   ChangeDetectorRef,
   Component,
   Input,
-  OnInit,
 } from '@angular/core';
 import { GeoTweet } from '@nartc/client/models';
 import { TweetTagMapService } from '@nartc/client/services';
@@ -20,12 +19,11 @@ interface Marker {
   styleUrls: ['./map.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MapComponent implements OnInit {
+export class MapComponent {
   center = new google.maps.LatLng(39.8283459, -98.5794797);
   markers: Marker[] = [];
 
   @Input() set geoTweets(geoTweets: GeoTweet[]) {
-    console.log({ geoTweets });
     this.convertToMarkers(geoTweets);
   }
 
@@ -55,14 +53,16 @@ export class MapComponent implements OnInit {
         options: {
           draggable: false,
           animation: google.maps.Animation.DROP,
-          icon: {
-            url: tag.marker,
-            size: new google.maps.Size(32, 32),
-            origin: new google.maps.Point(0, 0),
-            scaledSize: new google.maps.Size(32, 32),
-          },
+          icon: tag.marker
+            ? {
+                url: tag.marker,
+                size: new google.maps.Size(32, 32),
+                origin: new google.maps.Point(0, 0),
+                scaledSize: new google.maps.Size(32, 32),
+              }
+            : undefined,
         },
-        position: new google.maps.LatLng(tweet.lng, tweet.lat),
+        position: new google.maps.LatLng(tweet.lat, tweet.lng),
       });
     }
   }
@@ -71,6 +71,4 @@ export class MapComponent implements OnInit {
     private readonly tweetTagMapService: TweetTagMapService,
     private readonly cdr: ChangeDetectorRef,
   ) {}
-
-  ngOnInit(): void {}
 }

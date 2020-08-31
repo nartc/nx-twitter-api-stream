@@ -10,81 +10,37 @@
     <div *ngFor="let ruleControl of rulesControl.controls; let i = index">
       <div class="p-4 mb-4 border border-gray-dark rounded" [formGroupName]="i">
         <div class="grid grid-cols-4 grid-rows-2 gap-4">
-          <div>
-            <label
-              for="tag"
-              class="block uppercase tracking-wide text-sm font-bold mb-2"
-            >
-              Tag
-            </label>
-            <input
-              type="text"
-              id="tag"
-              placeholder="Unique tag"
-              formControlName="tag"
-              class="appearance-none text-sm h-8 text-black block w-full rounded py-3 px-4"
-            />
-          </div>
-          <div>
-            <label
-              for="label"
-              class="block uppercase tracking-wide text-sm font-bold mb-2"
-            >
-              Label
-            </label>
-            <input
-              type="text"
-              id="label"
-              placeholder="Chart Label"
-              formControlName="label"
-              class="appearance-none text-sm h-8 text-black block w-full rounded py-3 px-4"
-            />
-          </div>
-          <div>
-            <label
-              for="color"
-              class="block uppercase tracking-wide text-sm font-bold mb-2"
-            >
-              Color
-            </label>
-            <input
-              type="text"
-              id="color"
-              placeholder="Hex color"
-              formControlName="color"
-              class="appearance-none text-sm h-8 text-black block w-full rounded py-3 px-4"
-            />
-          </div>
-          <div>
-            <label
-              for="marker"
-              class="block uppercase tracking-wide text-sm font-bold mb-2"
-            >
-              Marker
-            </label>
-            <input
-              type="text"
-              id="marker"
-              placeholder="Map marker URL"
-              formControlName="marker"
-              class="appearance-none text-sm h-8 text-black block w-full rounded py-3 px-4"
-            />
-          </div>
-          <div class="col-span-4">
-            <label
-              for="query"
-              class="block uppercase tracking-wide text-sm font-bold mb-2"
-            >
-              Query
-            </label>
-            <input
-              type="text"
-              id="query"
-              placeholder="Twitter query value"
-              formControlName="query"
-              class="appearance-none text-sm h-8 text-black block w-full rounded py-3 px-4"
-            />
-          </div>
+          <nartc-settings-input
+            id="tag"
+            label="Tag*"
+            placeholder="Unique tag"
+            [control]="$any(ruleControl.get('tag'))"
+          ></nartc-settings-input>
+          <nartc-settings-input
+            id="label"
+            label="Label"
+            placeholder="Chart label"
+            [control]="$any(ruleControl.get('label'))"
+          ></nartc-settings-input>
+          <nartc-settings-input
+            id="color"
+            label="Color"
+            placeholder="Chart color (hex string)"
+            [control]="$any(ruleControl.get('color'))"
+          ></nartc-settings-input>
+          <nartc-settings-input
+            id="marker"
+            label="Marker Image URL"
+            placeholder="Image URL for map marker"
+            [control]="$any(ruleControl.get('marker'))"
+          ></nartc-settings-input>
+          <nartc-settings-input
+            class="col-span-4"
+            id="query"
+            label="Query*"
+            placeholder="Twitter query value"
+            [control]="$any(ruleControl.get('query'))"
+          ></nartc-settings-input>
         </div>
         <button
           class="btn btn-sm btn-primary gradient-right-primary mt-4"
@@ -96,21 +52,30 @@
       </div>
     </div>
   </div>
-  <div class="flex items-center justify-end">
-    <button
-      class="btn btn-primary gradient-right-primary"
-      type="button"
-      [disabled]="isConfirmedDisabled || form.invalid"
-      (click)="confirm()"
+  <div class="flex items-center justify-between">
+    <a
+      class="link"
+      href="https://developer.twitter.com/en/docs/twitter-api/tweets/filtered-stream/integrate/build-a-rule"
+      target="_blank"
     >
-      Confirm
-    </button>
-    <button
-      class="btn btn-secondary gradient-right-secondary ml-4"
-      type="button"
-      (click)="cancel()"
-    >
-      Cancel
-    </button>
+      Twitter API Documentations - Build Rules
+    </a>
+    <section>
+      <button
+        class="btn btn-primary gradient-right-primary"
+        type="button"
+        [disabled]="isConfirmedDisabled || form.invalid"
+        (click)="confirm()"
+      >
+        Confirm
+      </button>
+      <button
+        class="btn btn-secondary gradient-right-secondary ml-4"
+        type="button"
+        (click)="cancel()"
+      >
+        Cancel
+      </button>
+    </section>
   </div>
 </form>

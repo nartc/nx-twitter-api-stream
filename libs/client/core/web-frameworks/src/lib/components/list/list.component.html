@@ -2,7 +2,11 @@
   class="absolute h-full w-full overflow-auto border-2 border-gray-medium bg-accent rounded"
   [@listAnimation]="tweets.length"
 >
-  <cdk-virtual-scroll-viewport class="h-full" autosize>
+  <cdk-virtual-scroll-viewport
+    class="h-full"
+    autosize
+    *ngIf="!!tweets.length; else noTweet"
+  >
     <div
       *cdkVirtualFor="let tweet of tweets; trackBy: trackByFn"
       class="bg-white text-black border p-2 flex flex-col m-4 rounded"
@@ -25,4 +29,7 @@
       </a>
     </div>
   </cdk-virtual-scroll-viewport>
+  <ng-template #noTweet>
+    <span class="relative mx-4">Waiting for incoming tweets...</span>
+  </ng-template>
 </div>

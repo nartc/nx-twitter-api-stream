@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { applyTransaction } from '@datorama/akita';
-import { TweetRule, TweetTag } from '@nartc/client/models';
+import { TweetRule } from '@nartc/client/models';
 import { SocketService, TweetTagMapService } from '@nartc/client/services';
 import { Subject } from 'rxjs';
 import { takeUntil, tap } from 'rxjs/operators';
@@ -11,6 +11,7 @@ import { WebFrameworksStore } from './state/web-frameworks/web-frameworks.store'
 
 @Injectable({ providedIn: 'root' })
 export class WebFrameworksService {
+  private readonly baseRulesApi = 'http://localhost:3333/api/rules';
   private readonly $unsubscribed = new Subject();
 
   constructor(
@@ -32,16 +33,16 @@ export class WebFrameworksService {
   addRules(rules: { value: string; tag: string }[]): void {
     this.http
       .post<{ id: string; value: string; tag: string }[]>(
-        'http://localhost:3333/api/rules',
+        this.baseRulesApi,
         rules,
       )
       .subscribe((data) => {
-        const newRules = data.map((rule) => {
-          const tag: TweetTag = JSON.parse(localStorage.getItem(rule.tag));
+        const newRules: TweetRule[] = data.map((rule) => {
+          const tag: TweetRule = JSON.parse(localStorage.getItem(rule.tag));
           this.tweetTagMapService.addTag(tag);
           return {
             id: rule.id,
-            query: rule.value,
+            value: rule.value,
             ...tag,
           };
         });
@@ -50,14 +51,14 @@ export class WebFrameworksService {
             rules: [...state.rules, ...newRules],
           }));
           for (const newRule of newRules) {
-            this.webFrameworksStore.update({ [newRule.value]: 0 });
+            this.webFrameworksStore.update({ [newRule.tag]: 0 });
           }
         });
       });
   }
 
   deleteRules(rules: string[]): void {
-    this.http.put('http://localhost:3333/api/rules', rules).subscribe(() => {
+    this.http.put(this.baseRulesApi, rules).subscribe(() => {
       const deletedRules = this.webFrameworksRulesStore
         .getValue()
         .rules.filter((rule) => rules.includes(rule.id));
@@ -65,17 +66,13 @@ export class WebFrameworksService {
         this.webFrameworksRulesStore.update((state) => ({
           rules: state.rules.filter((rule) => !rules.includes(rule.id)),
         }));
-        console.log({ deletedRules });
         for (const rule of deletedRules) {
-          localStorage.removeItem(rule.value);
-          this.webFrameworksStore.update((state) =>
-            Object.entries(state).reduce((updateState, [key]) => {
-              if (rule.value === key) {
-                delete updateState[rule.value];
-              }
-              return updateState;
-            }, state),
-          );
+          localStorage.removeItem(rule.tag);
+          this.webFrameworksStore.update((state) => {
+            const cloned = { ...state };
+            delete cloned[rule.tag];
+            return cloned;
+          });
         }
       });
     });
@@ -83,39 +80,30 @@ export class WebFrameworksService {
 
   private getRules() {
     this.http
-      .get<{ id: string; value: string; tag: string }[]>(
-        'http://localhost:3333/api/rules',
-      )
+      .get<{ id: string; value: string; tag: string }[]>(this.baseRulesApi)
       .subscribe((data) => {
         const defaultTags = ['angular', 'react', 'vue'];
         this.webFrameworksRulesStore.update(() => {
-          const defaultRules: (TweetRule & TweetTag)[] = data
-            .filter((rule) => defaultTags.includes(rule.tag))
-            .map((rule) => ({
-              id: rule.id,
-              query: rule.value,
-              ...this.tweetTagMapService.getTag(rule.tag),
-            }));
-          const rules: (TweetRule & TweetTag)[] = data
+          const rules: TweetRule[] = data
             .filter((rule) => !defaultTags.includes(rule.tag))
             .map((rule) => {
               const storedTag = localStorage.getItem(rule.tag);
-              const tag: TweetTag = storedTag
+              const tag: TweetRule = storedTag
                 ? JSON.parse(storedTag)
                 : {
                     label: rule.tag,
                     color: '',
                     marker: '',
-                    value: rule.tag,
+                    tag: rule.tag,
                   };
               this.tweetTagMapService.addTag(tag);
               return {
                 id: rule.id,
-                query: rule.value,
+                value: rule.value,
                 ...tag,
               };
             });
-          return { rules, defaultRules };
+          return { rules };
         });
       });
   }

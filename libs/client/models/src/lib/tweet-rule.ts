@@ -1,4 +1,8 @@
 export interface TweetRule {
   id: string;
-  query: string;
+  value: string;
+  tag: string;
+  label: string;
+  color: string;
+  marker: string;
 }

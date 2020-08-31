@@ -38,7 +38,9 @@ export class WebFrameworksComponent implements OnInit, OnDestroy {
           (acc: WebFrameworksChartData, [key, count]) => {
             const tag = this.tweetTagMapService.getTag(key);
             acc.results.push({ name: tag.label, value: count });
-            acc.customColors.push({ name: tag.label, value: tag.color });
+            if (tag.color) {
+              acc.customColors.push({ name: tag.label, value: tag.color });
+            }
             return acc;
           },
           { results: [], customColors: [] },

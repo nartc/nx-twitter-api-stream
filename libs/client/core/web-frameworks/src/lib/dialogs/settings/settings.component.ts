@@ -10,7 +10,7 @@ import {
   DynamicDialogConfig,
   DynamicDialogRef,
 } from '@nartc/client/core/dynamic-dialog';
-import { TweetRule, TweetTag } from '@nartc/client/models';
+import { TweetRule } from '@nartc/client/models';
 import { WebFrameworksService } from '../../web-frameworks.service';
 
 @Component({
@@ -26,9 +26,7 @@ export class SettingsComponent implements OnInit {
     private readonly dynamicDialogRef: DynamicDialogRef<
       { value: string; tag: string }[]
     >,
-    private readonly dynamicDialogConfig: DynamicDialogConfig<
-      (TweetTag & TweetRule)[]
-    >,
+    private readonly dynamicDialogConfig: DynamicDialogConfig<TweetRule[]>,
     private readonly fb: FormBuilder,
     private readonly webFrameworksService: WebFrameworksService,
   ) {}
@@ -56,27 +54,27 @@ export class SettingsComponent implements OnInit {
     });
   }
 
-  private constructRulesFormArray(rules: (TweetTag & TweetRule)[]) {
+  private constructRulesFormArray(rules: TweetRule[]) {
     return !rules.length ? [] : rules.map((rule) => this.createRuleGroup(rule));
   }
 
-  private createRuleGroup(rule?: TweetTag & TweetRule) {
+  private createRuleGroup(rule?: TweetRule) {
     if (rule == null) {
       return this.fb.group({
-        tag: [],
+        tag: ['', Validators.required],
         label: [],
         color: [],
         marker: [],
-        query: [],
+        query: ['', Validators.required],
       });
     }
 
     return this.fb.group({
-      tag: [{ value: rule.value, disabled: true }, Validators.required],
+      tag: [{ value: rule.tag, disabled: true }, Validators.required],
       label: [{ value: rule.label, disabled: true }],
       color: [{ value: rule.color, disabled: true }],
       marker: [{ value: rule.marker, disabled: true }],
-      query: [{ value: rule.query, disabled: true }, Validators.required],
+      query: [{ value: rule.value, disabled: true }, Validators.required],
     });
   }
 
@@ -84,8 +82,8 @@ export class SettingsComponent implements OnInit {
     const rules = this.form.value.rules;
     const rulesToAdd = [];
     for (const { color, tag, query, marker, label } of rules) {
-      const tweetTag: TweetTag = {
-        value: tag,
+      const tweetTag = {
+        tag,
         marker,
         color,
         label,
