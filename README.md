@@ -1,98 +1,91 @@
-# Nartc
+# Twitter API v2 Filtered Stream with Angular + NestJS + Akita
 
-This project was generated using [Nx](https://nx.dev).
+This project is to showcase how to consume the [Twitter API v2][twitter] data-stream endpoints using [Angular][angular] and [NestJS][nest] managed by a [Nx][nx] workspace with [Akita][akita] State Management solution.
 
-<p align="center"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="450"></p>
+## Demo
 
-🔎 **Nx is a set of Extensible Dev Tools for Monorepos.**
+The application hasn't been deployed yet but a recorded demo can be found here:
+[![CloudApp][demo]](https://share.getcloudapp.com/5zuG2R8w)
 
-## Quick Start & Documentation
+## Tech Stack
 
-[Nx Documentation](https://nx.dev/angular)
+- [Angular][angular]
+- [NestJS][nest]
+- [SocketIO][socket]
+- [Nx][nx]
+- [TailwindCSS][tailwind]
+- [ngx-charts][charts]
+- [Angular Google Maps][googlemaps]
 
-[10-minute video showing all Nx features](https://nx.dev/angular/getting-started/what-is-nx)
+## Features
 
-[Interactive Tutorial](https://nx.dev/angular/tutorial/01-create-application)
+An Angular application with Twitter API v2 to stream real time tweets on 3 big frontend frameworks: Angular, React, and Vue.
 
-## Adding capabilities to your workspace
+- Horizontal bar chart shows tweet counts with real time update.
+- Scroll panel with the list of tweets with Virtual Scroll (Angular CDK)
+- Google map that will drop the logo of the framework mentioned in the tweet as the marker. If the tweet is not geo-tagged, then there’s no marker for that tweet.
+- Ability to add more rules to the Twitter API queries to stream different frameworks than the default big 3
 
-Nx supports many plugins which add capabilities for developing different types of applications and different tools.
+### Note on Geographical Data
 
-These capabilities include generating applications, libraries, etc as well as the devtools to test, and build projects as well.
+Initially, I thought **Twitter API** would return geolocation for the tweets. However, that would be a huge privacy flaw. **Twitter API** does indeed return geolocation for tweets **ONLY IF** the users turn on Location, allow **Twitter** to access the device's location service, and actually tag their tweets with a location.
 
-Below are our core plugins:
+To workaround this, I use [random-location][randomlocation] which is a JavaScript library that will generate random coordinates based on a Center Point and the Radius. For tweets that do not have Geolocation information, I generate a random coordinate for that tweet from the Center of the US.
 
-- [Angular](https://angular.io)
-  - `ng add @nrwl/angular`
-- [React](https://reactjs.org)
-  - `ng add @nrwl/react`
-- Web (no framework frontends)
-  - `ng add @nrwl/web`
-- [Nest](https://nestjs.com)
-  - `ng add @nrwl/nest`
-- [Express](https://expressjs.com)
-  - `ng add @nrwl/express`
-- [Node](https://nodejs.org)
-  - `ng add @nrwl/node`
+## High level flow
 
-There are also many [community plugins](https://nx.dev/nx-community) you could add.
+![high level flow][flow]
 
-## Generate an application
+The above diagram might be a little confusing which I will also point out a couple of main things:
 
-Run `ng g @nrwl/angular:app my-app` to generate an application.
+- FrontEnd, upon initialization, will do 3 things: Connect to the Socket connection, Send an API request to fetch the current Twitter API rules, and Listen for `tweetData` event from Socket.
+- Backend, upon a socket connection is established, will attempt to call the Twitter API stream endpoint and save the request as a `Subscription`:
+  - If there's already a `Subscription`, do nothing
+  - If there's not, call the Twitter API -> receive `IncomingMessage` as a data stream -> convert to RxJS Stream using `fromEventPattern`. When there's data from `IncomingMessage` (`on('data')`), a local `ReplaySubject` (`$tweet`) will push that `data` to its stream.
+- `tweetData` handler on the BackEnd constructs a record for `Map<string, Subscription>` which is used to keep track of each connected Client (Socket client) along with their `Subscription`. This `Subscription` is from `tweet$.subscribe()` which is an `Observable` of the `ReplaySubject` above. This is to make sure the `Subscription` from calling Twitter API is a single subscription but the FrontEnd can create as many subscriptions as possible based on the `ReplaySubject`.
+- Every piece of data will be pushed through Akita store as well, and the Components layer use data from the Store to render.
 
-> You can use any of the plugins above to generate applications as well.
+## Challenges
 
-When using Nx, you can create multiple applications and libraries in the same workspace.
+- Twitter API stream endpoint only allows **ONE** connection at a time. That's why the trick with RxJS in the above step comes into play.
+- Twitter API returns a data stream. Hence, traditional Request Fetching doesn't work. `Axios` does support this type of data with `responseType: stream` and transform the response to `IncomingMessage` which is a little tricky to work with.
+- The 2nd challenge also requires a Socket connection of some sort to push the data back to the FrontEnd in a real-time manner because traditional fetch wouldn't work.
+- Geographical data also turns out way different that what I initially thought it was. Check [Note on Geographical Data](#note-on-geographical-data).
 
-## Generate a library
+## Improvements
 
-Run `ng g @nrwl/angular:lib my-lib` to generate a library.
+- Mobile responsive: The application isn't mobile-friendly at the moment. But TailwindCSS would be able to handle that no problem at all.
+- Validations: There are no validations at all right now.
+- Error Handler: Error handler is a little weak as well.
+- Display more information about default Queries which are the big 3 frameworks.
 
-> You can also use any of the plugins above to generate libraries as well.
+## Time tracking
 
-Libraries are sharable across libraries and applications. They can be imported from `@nartc/mylib`.
+![time][time]
 
-## Development server
+I spent around 15-16 hours on this project. The rest of the time was writing up this README and looking up documentations in between. Overall, the project is challenging but super fun to work with.
 
-Run `ng serve my-app` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
+![files][files]
 
-## Code scaffolding
+As you can see here, `app.service.ts` takes up the most time because of all the RxJS magic with Twitter API Stream endpoint. Unsubscription logic is handled in `app.service.ts` as well.
 
-Run `ng g component my-component --project=my-app` to generate a new component.
+## License
 
-## Build
+Feel free to use my code on your project. It would be great if you put a reference to this repository.
 
-Run `ng build my-app` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+[MIT](https://opensource.org/licenses/MIT)
 
-## Running unit tests
-
-Run `ng test my-app` to execute the unit tests via [Jest](https://jestjs.io).
-
-Run `nx affected:test` to execute the unit tests affected by a change.
-
-## Running end-to-end tests
-
-Run `ng e2e my-app` to execute the end-to-end tests via [Cypress](https://www.cypress.io).
-
-Run `nx affected:e2e` to execute the end-to-end tests affected by a change.
-
-## Understand your workspace
-
-Run `nx dep-graph` to see a diagram of the dependencies of your projects.
-
-## Further help
-
-Visit the [Nx Documentation](https://nx.dev/angular) to learn more.
-
-## ☁ Nx Cloud
-
-### Computation Memoization in the Cloud
-
-<p align="center"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-cloud-card.png"></p>
-
-Nx Cloud pairs with Nx in order to enable you to build and test code more rapidly, by up to 10 times. Even teams that are new to Nx can connect to Nx Cloud and start saving time instantly.
-
-Teams using Nx gain the advantage of building full-stack applications with their preferred framework alongside Nx’s advanced code generation and project dependency graph, plus a unified experience for both frontend and backend developers.
-
-Visit [Nx Cloud](https://nx.app/) to learn more.
+[angular]: https://angular.io
+[nest]: https://nestjs.com
+[nx]: https://nx.dev
+[akita]: https://datorama.github.io/akita/
+[tailwind]: https://tailwindcss.com
+[charts]: https://swimlane.gitbook.io/ngx-charts/
+[googlemaps]: https://github.com/angular/components/blob/master/src/google-maps/README.md
+[twitter]: https://developer.twitter.com/en/products/twitter-api
+[socket]: https://socket.io/
+[randomlocation]: https://www.npmjs.com/package/random-location
+[demo]: docs/demo_screenshot.png
+[flow]: docs/flow.png
+[files]: docs/files.png
+[time]: docs/time-spent.png
