@@ -11,9 +11,8 @@ import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
 
 @Injectable()
 export class AppService {
-  private readonly baseUrl = 'https://api.twitter.com/2/tweets/search/stream';
-  private readonly bearerToken =
-    'Bearer AAAAAAAAAAAAAAAAAAAAAIWeHAEAAAAAlRRsJrB9%2BIEMUsnz9Q1beIF6uqI%3Dm1cOuYOIyAhgkhzvZ5PmvsBLpwB9YYnIEQRc2nmWYaB7KjeKFu';
+  private readonly baseUrl = process.env.TWITTER_STREAM_URL || '';
+  private readonly bearerToken = 'Bearer ' + process.env.TWITTER_BEARER_TOKEN;
   private readonly usCenter = { latitude: 39.8283459, longitude: -98.5794797 };
   private subscription: Subscription;
   private readonly $tweets = new ReplaySubject(1);

@@ -43,6 +43,7 @@
     "@datorama/akita": "5.2.3",
     "@nartc/tailwind-schematics": "1.0.8",
     "@nestjs/common": "7.4.3",
+    "@nestjs/config": "^0.5.0",
     "@nestjs/core": "7.4.3",
     "@nestjs/platform-express": "7.4.3",
     "@nestjs/platform-socket.io": "7.4.3",
