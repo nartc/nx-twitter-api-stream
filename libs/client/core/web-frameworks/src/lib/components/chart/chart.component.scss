@@ -1,0 +1,9 @@
+/*! purgecss start ignore */
+:host ::ng-deep .ngx-charts {
+  & g[ngx-charts-x-axis],
+  & g[ngx-charts-y-axis],
+  & g[ngx-charts-bar-label] {
+    fill: white;
+  }
+}
+/*! purgecss end ignore */

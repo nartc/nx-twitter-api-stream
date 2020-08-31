@@ -2,6 +2,8 @@ a.link {
   @apply text-primary underline;
 }
 
+
+/*! purgecss start ignore */
 .btn {
   &[disabled] {
     @apply opacity-50 cursor-not-allowed;
@@ -23,3 +25,4 @@ a.link {
     @apply px-3 py-1 text-sm;
   }
 }
+/*! purgecss end ignore */
