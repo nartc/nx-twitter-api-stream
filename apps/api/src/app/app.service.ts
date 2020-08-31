@@ -1,5 +1,6 @@
 import { HttpService, Injectable } from '@nestjs/common';
 import { IncomingMessage } from 'http';
+import * as randomLocation from 'random-location';
 import {
   fromEventPattern,
   ReplaySubject,
@@ -13,6 +14,7 @@ export class AppService {
   private readonly baseUrl = 'https://api.twitter.com/2/tweets/search/stream';
   private readonly bearerToken =
     'Bearer AAAAAAAAAAAAAAAAAAAAAIWeHAEAAAAAlRRsJrB9%2BIEMUsnz9Q1beIF6uqI%3Dm1cOuYOIyAhgkhzvZ5PmvsBLpwB9YYnIEQRc2nmWYaB7KjeKFu';
+  private readonly usCenter = { latitude: 39.8283459, longitude: -98.5794797 };
   private subscription: Subscription;
   private readonly $tweets = new ReplaySubject(1);
   tweets$ = this.$tweets.asObservable();
@@ -91,7 +93,21 @@ export class AppService {
         )
         .subscribe((data: unknown) => {
           try {
-            this.$tweets.next(JSON.parse(data as string));
+            const parsed = JSON.parse(data as string);
+            if (!parsed.geo && !parsed.includes.places) {
+              const random = randomLocation.randomCirclePoint(
+                this.usCenter,
+                2000000,
+              );
+              parsed.includes.places = [
+                {
+                  geo: {
+                    bbox: [random.longitude, random.latitude],
+                  },
+                },
+              ];
+            }
+            this.$tweets.next(parsed);
           } catch (e) {
             console.error('error parsing tweet');
           }

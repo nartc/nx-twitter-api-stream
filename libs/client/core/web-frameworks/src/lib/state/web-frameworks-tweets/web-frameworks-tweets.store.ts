@@ -26,7 +26,7 @@ export class WebFrameworksTweetsStore extends Store<WebFrameworksTweetsState> {
       data: { text, id, public_metrics },
       includes: {
         users: [author],
-        places = [],
+        places: [place] = [],
       },
       matching_rules,
     } = tweet;
@@ -46,13 +46,13 @@ export class WebFrameworksTweetsStore extends Store<WebFrameworksTweetsState> {
         tweets: [newTweet, ...state.tweets],
       };
 
-      if (!!places.length) {
+      if (!!place) {
         updatedState.geoTweets = [
           {
             ...newTweet,
             tags: matching_rules.map((rule) => rule.tag) ?? [],
-            lat: places[0].geo.bbox[1],
-            lng: places[0].geo.bbox[0],
+            lat: place.geo.bbox[1],
+            lng: place.geo.bbox[0],
           },
           ...state.geoTweets,
         ];
